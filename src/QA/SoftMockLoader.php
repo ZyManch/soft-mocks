@@ -14,13 +14,13 @@ class SoftMockLoader {
         } else {
             define('SOFTMOCKS_ROOT_PATH', '/');
         }
-        $this->_loadDir(__DIR__ . '/vendor/PHP-Parser/lib/PhpParser/');
-        $this->_loadDir(__DIR__ . '/src/QA/');
+        $this->_loadDir(__DIR__ . '/../../vendor/PHP-Parser/lib/PhpParser/');
+        $this->_loadDir(__DIR__ . '/../../src/QA/');
         \PhpParser\Autoloader::register(true);
         SoftMocks::setLockFilePath(sys_get_temp_dir().'/soft_mocks_rewrite.lock');
         SoftMocks::setPhpunitPath(realpath($root.'/vendor/phpunit'));
         SoftMocks::addIgnorePath([
-             __DIR__,
+             dirname(dirname(__DIR__)),
              $root.'/vendor/codeception',
              $root.'/vendor/behat',
              $root.'/vendor/sebastian',
@@ -34,7 +34,7 @@ class SoftMockLoader {
         $out = [];
         $command = sprintf(
             "find %s -type f -name '*.php'",
-            escapeshellarg($dir)
+            escapeshellarg(realpath($dir))
         );
         @exec($command, $out);
         foreach ($out as $f) {
