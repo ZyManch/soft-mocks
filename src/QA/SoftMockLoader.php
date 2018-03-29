@@ -14,9 +14,10 @@ class SoftMockLoader {
         } else {
             define('SOFTMOCKS_ROOT_PATH', '/');
         }
+        require_once(__DIR__ . "/../../vendor/PHP-Parser/lib/PhpParser/Autoloader.php");
+        \PhpParser\Autoloader::register(true);
         $this->_loadDir(__DIR__ . '/../../vendor/PHP-Parser/lib/PhpParser/');
         $this->_loadDir(__DIR__ . '/../../src/QA/');
-        \PhpParser\Autoloader::register(true);
         SoftMocks::setLockFilePath(sys_get_temp_dir().'/soft_mocks_rewrite.lock');
         SoftMocks::setPhpunitPath(realpath($root.'/vendor/phpunit'));
         SoftMocks::addIgnorePath([
