@@ -20,13 +20,13 @@ class SoftMockLoader {
         $this->_loadDir(__DIR__ . '/../../src/QA/');
         SoftMocks::setLockFilePath(sys_get_temp_dir().'/soft_mocks_rewrite.lock');
         SoftMocks::setPhpunitPath(realpath($root.'/vendor/phpunit'));
-        SoftMocks::addIgnorePath([
-             dirname(dirname(__DIR__)),
-             $root.'/vendor/codeception',
-             $root.'/vendor/behat',
-             $root.'/vendor/sebastian',
-             $root .'/tests'
-        ]);
+        SoftMocks::addIgnorePath(array_map('realpath',[
+            dirname(dirname(__DIR__)),
+            $root.'/vendor/codeception/src',
+            $root.'/vendor/behat',
+            $root.'/vendor/sebastian',
+            $root .'/tests'
+        ]));
         SoftMocks::ignoreFiles(array_map('realpath',$ignoreFiles));
         SoftMocks::init();
     }
@@ -46,6 +46,6 @@ class SoftMockLoader {
     }
 
     public function includeFile($fileName) {
-        require_once(SoftMocks::rewrite($fileName));
+        require_once(SoftMocks::rewrite(realpath($fileName)));
     }
 }
