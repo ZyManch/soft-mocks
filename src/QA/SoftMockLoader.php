@@ -22,7 +22,7 @@ class SoftMockLoader {
         SoftMocks::setPhpunitPath(realpath($root.'/vendor/phpunit'));
         SoftMocks::addIgnorePath(array_map('realpath',[
             dirname(dirname(__DIR__)),
-            $root.'/vendor/codeception/src',
+            $root.'/vendor/codeception/codeception/src',
             $root.'/vendor/behat',
             $root.'/vendor/sebastian',
             $root .'/tests'
