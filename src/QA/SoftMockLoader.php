@@ -45,7 +45,8 @@ class SoftMockLoader {
         }
     }
 
-    public function includeFile($fileName) {
+    public function includeFile($fileName, $args = []) {
+        extract($args, EXTR_OVERWRITE);
         require_once(SoftMocks::rewrite(realpath($fileName)));
     }
 }
