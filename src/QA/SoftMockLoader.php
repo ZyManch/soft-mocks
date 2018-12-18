@@ -32,16 +32,19 @@ class SoftMockLoader {
     }
 
     protected function _loadDir($dir) {
-        $out = [];
-        $command = sprintf(
-            "find %s -type f -name '*.php'",
-            escapeshellarg(realpath($dir))
-        );
-        @exec($command, $out);
-        foreach ($out as $f) {
-            if (substr($f,-strlen('SoftMockLoader.php')) !== 'SoftMockLoader.php') {
-                require_once($f);
+        $dir = realpath($dir);
+        $files = scandir($dir, SCANDIR_SORT_NONE );
+        foreach ($files as $file) {
+            if ($file[0]==='.') {
+                continue;
             }
+            $fullName = $dir.'/'.$file;
+            if (is_dir($fullName)) {
+                $this->_loadDir($fullName);
+            } else if ($file!=='SoftMockLoader.php') {
+                require_once($fullName);
+            }
+
         }
     }
 
