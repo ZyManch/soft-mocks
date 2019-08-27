@@ -1670,6 +1670,17 @@ class SoftMocksTraverser extends \PhpParser\NodeVisitorAbstract
     {
         if ($this->in_interface) return null;
 
+        $isVoid = $Node->returnType === 'void';
+
+        $returnDecorator = $isVoid ?
+            function($returnValue, $asArray) {
+                $result = new Stmt\Return_();
+                return $asArray ? [$returnValue,$result] : $result;
+            } :
+            function($returnValue, $asArray) {
+                $result = new Stmt\Return_($returnValue);
+                return $asArray ? [$result] : $result;
+            };
         // if (SoftMocks::isMocked(self::class, static::class, __FUNCTION__)) {
         //     $params = [/* variables with references to them */];
         //     $mm_func_args = func_get_args();
@@ -1772,26 +1783,20 @@ class SoftMocksTraverser extends \PhpParser\NodeVisitorAbstract
                     ]
                 ),
                 [
-                    'stmts' => [
-                        new Stmt\Return_(
-                            new Expr\Eval_(
-                                new Expr\Variable("__mock_code")
-                            )
-                        )
-                    ],
-                    'else' => new Stmt\Return_(
-                        new Expr\FuncCall(
-                            new Name("\\call_user_func_array"),
-                            [
-                                new Expr\Variable("__mock_code"),
-                                new Expr\Array_([
-                                    new Expr\Variable("mm_func_args"),
-                                    new Expr\Variable("params")
-                                ])
+                    'stmts' => $returnDecorator(new Expr\Eval_(
+                        new Expr\Variable("__mock_code")
+                    ), true),
+                    'else' => $returnDecorator(new Expr\FuncCall(
+                        new Name("\\call_user_func_array"),
+                        [
+                            new Expr\Variable("__mock_code"),
+                            new Expr\Array_([
+                                new Expr\Variable("mm_func_args"),
+                                new Expr\Variable("params")
+                            ])
 
-                            ]
-                        )
-                    )
+                        ]
+                    ), false)
                 ]
             );
         }
