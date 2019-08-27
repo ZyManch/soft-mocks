@@ -1670,7 +1670,7 @@ class SoftMocksTraverser extends \PhpParser\NodeVisitorAbstract
     {
         if ($this->in_interface) return null;
 
-        $isVoid = $Node->returnType === 'void';
+        $isVoid = 'void' === (string)$Node->returnType;
 
         $returnDecorator = $isVoid ?
             function($returnValue, $asArray) {
